@@ -70,6 +70,7 @@
   ::-webkit-scrollbar { height:8px;width:8px; }
   ::-webkit-scrollbar-track { background:var(--bg); }
   ::-webkit-scrollbar-thumb { background:#2a2f42;border-radius:4px; }
+  html, body { overflow-x:auto; min-width:0; }
 </style>
 </head>
 <body>
@@ -134,6 +135,7 @@ const TODAY_WI=(()=>{for(let i=0;i<WEEKS.length;i++){const e=new Date(WEEKS[i]);
 const MF={},ML={};
 WEEKS.forEach((w,i)=>{const m=w.getMonth();if(MF[m]===undefined)MF[m]=i;});
 for(let m=0;m<12;m++)ML[m]=MF[m+1]!==undefined?MF[m+1]-1:WEEKS.length-1;
+if(MF[11]!==undefined){let last=MF[11];while(last<WEEKS.length&&WEEKS[last].getMonth()===11)last++;ML[11]=last-1;}
 function wcol(dt){const c=new Date(Math.max(Y_START,Math.min(Y_END,dt)));for(let i=0;i<WEEKS.length;i++){const e=new Date(WEEKS[i]);e.setDate(e.getDate()+6);if(c>=WEEKS[i]&&c<=e)return i;}return WEEKS.length-1;}
 function saveCredentials(){const a=document.getElementById('inp-asana').value.trim();if(!a){alert('Please enter your Asana token.');return;}localStorage.setItem('wb_at',a);document.getElementById('setup-overlay').classList.add('hidden');}
 function showSetup(){document.getElementById('setup-overlay').classList.remove('hidden');const a=localStorage.getItem('wb_at')||'';if(a)document.getElementById('inp-asana').value=a;}
