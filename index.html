@@ -9,7 +9,6 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --bg:#0b0e17;--surface:#131720;--border:#252a3a;--gold:#f0c040;--text:#dde2f0;--muted:#6a7490; }
   body { font-family:'Source Sans 3','Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh; }
-
   #setup-overlay { position:fixed;inset:0;background:rgba(11,14,23,0.97);display:flex;align-items:center;justify-content:center;z-index:1000; }
   #setup-overlay.hidden { display:none; }
   .setup-card { background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px 44px;max-width:480px;width:90%;box-shadow:0 32px 80px rgba(0,0,0,0.6); }
@@ -24,11 +23,9 @@
   .setup-btn { width:100%;padding:12px;background:#27ae60;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:background 0.2s; }
   .setup-btn:hover { background:#219a52; }
   .setup-note { text-align:center;color:var(--muted);font-size:11px;margin-top:14px; }
-
   .page-header { padding:20px 28px 16px;background:linear-gradient(135deg,#141824,#1a1f2e);border-bottom:2px solid var(--border);display:flex;align-items:baseline;gap:18px;flex-wrap:wrap; }
   .page-header h1 { font-family:'Bebas Neue',Impact,Arial;font-size:36px;letter-spacing:3px;color:var(--gold);line-height:1; }
   .page-header .sub { font-size:12px;color:var(--muted);font-weight:300; }
-
   .toolbar { padding:10px 28px;background:#0f1320;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap; }
   .btn-sync { padding:8px 22px;background:#27ae60;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;transition:background 0.2s,opacity 0.2s; }
   .btn-sync:hover:not(:disabled) { background:#219a52; }
@@ -40,7 +37,6 @@
   .li { display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px; }
   .ls { width:14px;height:9px;border-radius:2px;display:inline-block;flex-shrink:0; }
   .lt { width:3px;height:13px;background:var(--gold);border-radius:1px;display:inline-block; }
-
   .status-bar { padding:10px 28px;background:#0d1520;border-bottom:1px solid #1a2535;font-size:12px;color:#5b9bd5;display:flex;align-items:center;gap:8px; }
   .status-bar.hidden { display:none; }
   .error-bar { padding:10px 28px;background:#1a0505;border-left:3px solid #e74c3c;color:#ff8080;font-size:12px; }
@@ -50,7 +46,6 @@
   .empty-state h3 { font-size:17px;color:var(--muted);margin-bottom:10px; }
   .empty-state p { font-size:13px;color:#3a4258; }
   .empty-state strong { color:#27ae60; }
-
   .gantt-wrap { overflow-x:auto; }
   table { border-collapse:collapse;table-layout:fixed; }
   .mhdr-lbl { background:#2E4057;padding:6px 14px;font-family:'Bebas Neue',Impact,Arial;font-size:11px;letter-spacing:1px;color:#aab;text-align:left;border-right:1px solid #3a4055;height:32px;vertical-align:middle; }
@@ -78,7 +73,6 @@
 </style>
 </head>
 <body>
-
 <div id="setup-overlay">
   <div class="setup-card">
     <h2>WaBa Grill Gantt</h2>
@@ -92,12 +86,10 @@
     <div class="setup-note">🔒 Stored locally in your browser only</div>
   </div>
 </div>
-
 <div class="page-header">
   <h1>Annual Planning by Owner</h1>
   <span class="sub">WaBa Grill &nbsp;·&nbsp; 2026 Gantt Chart &nbsp;·&nbsp; Today: March 4, 2026</span>
 </div>
-
 <div class="toolbar">
   <button class="btn-sync" id="sync-btn" onclick="syncData()">
     <span id="sync-icon">⟳</span>
@@ -117,13 +109,11 @@
     <div class="li"><span class="lt"></span>Today</div>
   </div>
 </div>
-
 <div class="status-bar hidden" id="status-bar">
   <span class="spinner"></span>
   <span id="status-text">Connecting...</span>
 </div>
 <div class="error-bar hidden" id="error-bar"></div>
-
 <div id="gantt-output">
   <div class="empty-state">
     <div class="icon">📋</div>
@@ -131,7 +121,6 @@
     <p>Click <strong>Sync</strong> to pull live data from your Asana project</p>
   </div>
 </div>
-
 <script>
 const SEC_COLOR={"Modules":"#3a7bd5","Ops Services & Training":"#e06c2e","Information Technology":"#2ecc71","Product Development & Supply Chain":"#9b59b6","Marketing & Design":"#e84393","Operations Team":"#1abc9c","Brand":"#e74c3c"};
 const SEC_BG={"Modules":"#162540","Ops Services & Training":"#3a1a08","Information Technology":"#0d2a1a","Product Development & Supply Chain":"#1e0d30","Marketing & Design":"#2d0a1e","Operations Team":"#091e1b","Brand":"#2a0a0a"};
@@ -139,7 +128,6 @@ const SEC_ROW_BG={"Modules":"#0e1929","Ops Services & Training":"#1a0d04","Infor
 const DONE_CLR="#27ae60",MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const TODAY=new Date(2026,2,4),Y_START=new Date(2026,0,1),Y_END=new Date(2026,11,31);
 const COL_W=22,LBL_W=330,OWN_W=140;
-
 function buildWeeks(){const w=[];let d=new Date(Y_START);while(d.getDay()!==1)d.setDate(d.getDate()-1);while(d<=Y_END){w.push(new Date(d));d.setDate(d.getDate()+7);}return w;}
 const WEEKS=buildWeeks();
 const TODAY_WI=(()=>{for(let i=0;i<WEEKS.length;i++){const e=new Date(WEEKS[i]);e.setDate(e.getDate()+6);if(TODAY>=WEEKS[i]&&TODAY<=e)return i;}return 0;})();
@@ -147,30 +135,15 @@ const MF={},ML={};
 WEEKS.forEach((w,i)=>{const m=w.getMonth();if(MF[m]===undefined)MF[m]=i;});
 for(let m=0;m<12;m++)ML[m]=MF[m+1]!==undefined?MF[m+1]-1:WEEKS.length-1;
 function wcol(dt){const c=new Date(Math.max(Y_START,Math.min(Y_END,dt)));for(let i=0;i<WEEKS.length;i++){const e=new Date(WEEKS[i]);e.setDate(e.getDate()+6);if(c>=WEEKS[i]&&c<=e)return i;}return WEEKS.length-1;}
-
-function saveCredentials(){
-  const a=document.getElementById('inp-asana').value.trim();
-  if(!a){alert('Please enter your Asana token.');return;}
-  localStorage.setItem('wb_at',a);
-  document.getElementById('setup-overlay').classList.add('hidden');
-}
-function showSetup(){
-  document.getElementById('setup-overlay').classList.remove('hidden');
-  const a=localStorage.getItem('wb_at')||'';
-  if(a)document.getElementById('inp-asana').value=a;
-}
+function saveCredentials(){const a=document.getElementById('inp-asana').value.trim();if(!a){alert('Please enter your Asana token.');return;}localStorage.setItem('wb_at',a);document.getElementById('setup-overlay').classList.add('hidden');}
+function showSetup(){document.getElementById('setup-overlay').classList.remove('hidden');const a=localStorage.getItem('wb_at')||'';if(a)document.getElementById('inp-asana').value=a;}
 window.addEventListener('load',()=>{if(!localStorage.getItem('wb_at'))showSetup();});
-
 async function syncData(){
   const asanaToken=localStorage.getItem('wb_at');
   if(!asanaToken){showSetup();return;}
   setLoading(true);showStatus('Connecting to Asana...');hideError();
   try{
-    const res=await fetch('/.netlify/functions/proxy',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({asanaToken}),
-    });
+    const res=await fetch('/.netlify/functions/proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({asanaToken})});
     showStatus('Loading tasks...');
     if(!res.ok){const e=await res.text();throw new Error(`Error ${res.status}: ${e.slice(0,300)}`);}
     const data=await res.json();
@@ -181,17 +154,11 @@ async function syncData(){
   }catch(e){hideStatus();showError(e.message);}
   finally{setLoading(false);}
 }
-
-function setLoading(on){
-  document.getElementById('sync-icon').innerHTML=on?'<span class="spinner"></span>':'⟳';
-  document.getElementById('sync-label').textContent=on?'Syncing...':'Sync';
-  document.getElementById('sync-btn').disabled=on;
-}
+function setLoading(on){document.getElementById('sync-icon').innerHTML=on?'<span class="spinner"></span>':'⟳';document.getElementById('sync-label').textContent=on?'Syncing...':'Sync';document.getElementById('sync-btn').disabled=on;}
 function showStatus(msg){document.getElementById('status-text').textContent=msg;document.getElementById('status-bar').classList.remove('hidden');}
 function hideStatus(){document.getElementById('status-bar').classList.add('hidden');}
 function showError(msg){const b=document.getElementById('error-bar');b.textContent='⚠ '+msg;b.classList.remove('hidden');}
 function hideError(){document.getElementById('error-bar').classList.add('hidden');}
-
 function renderGantt(sections){
   const NW=WEEKS.length,TOTAL=2+NW;
   let h=`<div class="gantt-wrap"><table><thead><tr>`;
