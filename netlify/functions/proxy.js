@@ -7,15 +7,7 @@ exports.handler = async function(event) {
     if (!asanaToken) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing asanaToken' }) };
     }
-    const projRes = await fetch('https://app.asana.com/api/1.0/projects?workspace=644192393389457&opt_fields=name,gid&limit=100', {
-      headers: { 'Authorization': `Bearer ${asanaToken}` }
-    });
-    const projData = await projRes.json();
-    const project = (projData.data || []).find(p => p.name === 'Annual Planning by Owner');
-    if (!project) {
-      return { statusCode: 404, body: JSON.stringify({ error: 'Project not found' }) };
-    }
-    const secRes = await fetch(`https://app.asana.com/api/1.0/projects/${project.gid}/sections?opt_fields=name,gid`, {
+    const secRes = await fetch('https://app.asana.com/api/1.0/projects/1213203146994140/sections?opt_fields=name,gid', {
       headers: { 'Authorization': `Bearer ${asanaToken}` }
     });
     const sections = (await secRes.json()).data || [];
@@ -35,10 +27,8 @@ exports.handler = async function(event) {
     }));
     return {
       statusCode: 200,
-      headers: { 
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: JSON.stringify({ projectName: project.name, sections: sectionResults }),
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ projectName: 'Annual Planning by Owner', sections: sectionResults }),
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
