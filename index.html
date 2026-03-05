@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WaBa Grill — Annual Planning Gantt 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --bg:#0b0e17;--surface:#131720;--border:#252a3a;--gold:#f0c040;--text:#dde2f0;--muted:#6a7490; }
+  body { font-family:'Source Sans 3','Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh; }
+
+  #setup-overlay { position:fixed;inset:0;background:rgba(11,14,23,0.97);display:flex;align-items:center;justify-content:center;z-index:1000; }
+  #setup-overlay.hidden { display:none; }
+  .setup-card { background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px 44px;max-width:480px;width:90%;box-shadow:0 32px 80px rgba(0,0,0,0.6); }
+  .setup-card h2 { font-family:'Bebas Neue',Impact,Arial;font-size:28px;letter-spacing:2px;color:var(--gold);margin-bottom:6px; }
+  .setup-card p { color:var(--muted);font-size:13px;margin-bottom:28px;line-height:1.6; }
+  .field { margin-bottom:18px; }
+  .field label { display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px; }
+  .field input { width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;font-family:'Courier New',monospace;transition:border-color 0.2s; }
+  .field input:focus { outline:none;border-color:var(--gold); }
+  .field .hint { font-size:11px;color:var(--muted);margin-top:5px; }
+  .field .hint a { color:#5b9bd5;text-decoration:none; }
+  .setup-btn { width:100%;padding:12px;background:#27ae60;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:background 0.2s; }
+  .setup-btn:hover { background:#219a52; }
+  .setup-note { text-align:center;color:var(--muted);font-size:11px;margin-top:14px; }
+
+  .page-header { padding:20px 28px 16px;background:linear-gradient(135deg,#141824,#1a1f2e);border-bottom:2px solid var(--border);display:flex;align-items:baseline;gap:18px;flex-wrap:wrap; }
+  .page-header h1 { font-family:'Bebas Neue',Impact,Arial;font-size:36px;letter-spacing:3px;color:var(--gold);line-height:1; }
+  .page-header .sub { font-size:12px;color:var(--muted);font-weight:300; }
+
+  .toolbar { padding:10px 28px;background:#0f1320;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap; }
+  .btn-sync { padding:8px 22px;background:#27ae60;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;transition:background 0.2s,opacity 0.2s; }
+  .btn-sync:hover:not(:disabled) { background:#219a52; }
+  .btn-sync:disabled { opacity:0.55;cursor:not-allowed; }
+  .btn-creds { padding:8px 16px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:5px;cursor:pointer;font-size:13px;transition:all 0.2s; }
+  .btn-creds:hover { border-color:var(--gold);color:var(--gold); }
+  .sync-time { font-size:11px;color:#4a5870; }
+  .legend { display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-left:4px; }
+  .li { display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px; }
+  .ls { width:14px;height:9px;border-radius:2px;display:inline-block;flex-shrink:0; }
+  .lt { width:3px;height:13px;background:var(--gold);border-radius:1px;display:inline-block; }
+
+  .status-bar { padding:10px 28px;background:#0d1520;border-bottom:1px solid #1a2535;font-size:12px;color:#5b9bd5;display:flex;align-items:center;gap:8px; }
+  .status-bar.hidden { display:none; }
+  .error-bar { padding:10px 28px;background:#1a0505;border-left:3px solid #e74c3c;color:#ff8080;font-size:12px; }
+  .error-bar.hidden { display:none; }
+  .empty-state { padding:80px 40px;text-align:center; }
+  .empty-state .icon { font-size:52px;margin-bottom:18px; }
+  .empty-state h3 { font-size:17px;color:var(--muted);margin-bottom:10px; }
+  .empty-state p { font-size:13px;color:#3a4258; }
+  .empty-state strong { color:#27ae60; }
+
+  .gantt-wrap { overflow-x:auto; }
+  table { border-collapse:collapse;table-layout:fixed; }
+  .mhdr-lbl { background:#2E4057;padding:6px 14px;font-family:'Bebas Neue',Impact,Arial;font-size:11px;letter-spacing:1px;color:#aab;text-align:left;border-right:1px solid #3a4055;height:32px;vertical-align:middle; }
+  .mhdr-own { background:#2E4057;padding:6px;font-family:'Bebas Neue',Impact,Arial;font-size:11px;letter-spacing:1px;color:#aab;text-align:center;border-right:2px solid #4a5068;height:32px;vertical-align:middle; }
+  .mhdr-m { background:#4472C4;font-family:'Bebas Neue',Impact,Arial;font-size:14px;letter-spacing:2px;color:#fff;text-align:center;border-right:1px solid #3a4055;height:32px;vertical-align:middle; }
+  .whdr-lbl { background:#2E4057;height:20px;border-right:1px solid #3a4055; }
+  .whdr-own { background:#2E4057;height:20px;border-right:2px solid #4a5068; }
+  .whdr-wk { background:#5B9BD5;font-size:7px;color:#fff;text-align:center;height:20px;vertical-align:middle;border-right:1px solid #2a3050; }
+  .whdr-today { border-left:2px solid var(--gold); }
+  .sec-row td { font-family:'Bebas Neue',Impact,Arial;font-size:13px;letter-spacing:2px;color:#fff;padding:6px 16px;border-top:3px solid var(--bg);border-bottom:1px solid var(--bg);height:28px;vertical-align:middle; }
+  .tr-task { height:34px; }
+  .tr-task:hover .td-lbl,.tr-task:hover .td-own { filter:brightness(1.18); }
+  .td-lbl { padding:0 10px 0 18px;border-bottom:1px solid #1e2233;border-right:1px solid #2a2f42;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px;vertical-align:middle; }
+  .td-own { padding:0 6px;text-align:center;border-bottom:1px solid #1e2233;border-right:2px solid #2e3450;font-size:11px;color:var(--muted);font-style:italic;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .td-wk { border-bottom:1px solid #181c28;border-right:1px solid #181c28;vertical-align:middle;padding:0; }
+  .td-wk.e { background:#1a1e2b; } .td-wk.o { background:#161a26; }
+  .td-wk.tc { border-left:2px solid var(--gold); }
+  .bar-pill { height:18px;margin:0 1px;opacity:0.9; }
+  .tr-spacer td { height:7px;background:var(--bg); }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .spinner { display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.2);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite; }
+  ::-webkit-scrollbar { height:8px;width:8px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:#2a2f42;border-radius:4px; }
+</style>
+</head>
+<body>
+
+<div id="setup-overlay">
+  <div class="setup-card">
+    <h2>WaBa Grill Gantt</h2>
+    <p>Enter your Asana Personal Access Token to connect. This is saved in your browser only.</p>
+    <div class="field">
+      <label>Asana Personal Access Token</label>
+      <input type="password" id="inp-asana" placeholder="1/xxxxxxxxxxxxxxxx..." autocomplete="off">
+      <div class="hint">Get yours at <a href="https://app.asana.com/0/my-apps" target="_blank">app.asana.com/0/my-apps</a> → Create New Token</div>
+    </div>
+    <button class="setup-btn" onclick="saveCredentials()">Save &amp; Open Gantt →</button>
+    <div class="setup-note">🔒 Stored locally in your browser only</div>
+  </div>
+</div>
+
+<div class="page-header">
+  <h1>Annual Planning by Owner</h1>
+  <span class="sub">WaBa Grill &nbsp;·&nbsp; 2026 Gantt Chart &nbsp;·&nbsp; Today: March 4, 2026</span>
+</div>
+
+<div class="toolbar">
+  <button class="btn-sync" id="sync-btn" onclick="syncData()">
+    <span id="sync-icon">⟳</span>
+    <span id="sync-label">Sync</span>
+  </button>
+  <button class="btn-creds" onclick="showSetup()">⚙ Credentials</button>
+  <span class="sync-time" id="sync-time"></span>
+  <div class="legend">
+    <div class="li"><span class="ls" style="background:#27ae60"></span>Completed</div>
+    <div class="li"><span class="ls" style="background:#3a7bd5"></span>Modules</div>
+    <div class="li"><span class="ls" style="background:#e06c2e"></span>Ops</div>
+    <div class="li"><span class="ls" style="background:#2ecc71"></span>IT</div>
+    <div class="li"><span class="ls" style="background:#9b59b6"></span>Product</div>
+    <div class="li"><span class="ls" style="background:#e84393"></span>Marketing</div>
+    <div class="li"><span class="ls" style="background:#1abc9c"></span>Ops Team</div>
+    <div class="li"><span class="ls" style="background:#e74c3c"></span>Brand</div>
+    <div class="li"><span class="lt"></span>Today</div>
+  </div>
+</div>
+
+<div class="status-bar hidden" id="status-bar">
+  <span class="spinner"></span>
+  <span id="status-text">Connecting...</span>
+</div>
+<div class="error-bar hidden" id="error-bar"></div>
+
+<div id="gantt-output">
+  <div class="empty-state">
+    <div class="icon">📋</div>
+    <h3>No data loaded yet</h3>
+    <p>Click <strong>Sync</strong> to pull live data from your Asana project</p>
+  </div>
+</div>
+
+<script>
+const SEC_COLOR={"Modules":"#3a7bd5","Ops Services & Training":"#e06c2e","Information Technology":"#2ecc71","Product Development & Supply Chain":"#9b59b6","Marketing & Design":"#e84393","Operations Team":"#1abc9c","Brand":"#e74c3c"};
+const SEC_BG={"Modules":"#162540","Ops Services & Training":"#3a1a08","Information Technology":"#0d2a1a","Product Development & Supply Chain":"#1e0d30","Marketing & Design":"#2d0a1e","Operations Team":"#091e1b","Brand":"#2a0a0a"};
+const SEC_ROW_BG={"Modules":"#0e1929","Ops Services & Training":"#1a0d04","Information Technology":"#071a10","Product Development & Supply Chain":"#130820","Marketing & Design":"#1a0512","Operations Team":"#050f0e","Brand":"#160505"};
+const DONE_CLR="#27ae60",MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const TODAY=new Date(2026,2,4),Y_START=new Date(2026,0,1),Y_END=new Date(2026,11,31);
+const COL_W=22,LBL_W=330,OWN_W=140;
+
+function buildWeeks(){const w=[];let d=new Date(Y_START);while(d.getDay()!==1)d.setDate(d.getDate()-1);while(d<=Y_END){w.push(new Date(d));d.setDate(d.getDate()+7);}return w;}
+const WEEKS=buildWeeks();
+const TODAY_WI=(()=>{for(let i=0;i<WEEKS.length;i++){const e=new Date(WEEKS[i]);e.setDate(e.getDate()+6);if(TODAY>=WEEKS[i]&&TODAY<=e)return i;}return 0;})();
+const MF={},ML={};
+WEEKS.forEach((w,i)=>{const m=w.getMonth();if(MF[m]===undefined)MF[m]=i;});
+for(let m=0;m<12;m++)ML[m]=MF[m+1]!==undefined?MF[m+1]-1:WEEKS.length-1;
+function wcol(dt){const c=new Date(Math.max(Y_START,Math.min(Y_END,dt)));for(let i=0;i<WEEKS.length;i++){const e=new Date(WEEKS[i]);e.setDate(e.getDate()+6);if(c>=WEEKS[i]&&c<=e)return i;}return WEEKS.length-1;}
+
+function saveCredentials(){
+  const a=document.getElementById('inp-asana').value.trim();
+  if(!a){alert('Please enter your Asana token.');return;}
+  localStorage.setItem('wb_at',a);
+  document.getElementById('setup-overlay').classList.add('hidden');
+}
+function showSetup(){
+  document.getElementById('setup-overlay').classList.remove('hidden');
+  const a=localStorage.getItem('wb_at')||'';
+  if(a)document.getElementById('inp-asana').value=a;
+}
+window.addEventListener('load',()=>{if(!localStorage.getItem('wb_at'))showSetup();});
+
+async function syncData(){
+  const asanaToken=localStorage.getItem('wb_at');
+  if(!asanaToken){showSetup();return;}
+  setLoading(true);showStatus('Connecting to Asana...');hideError();
+  try{
+    const res=await fetch('/.netlify/functions/proxy',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({asanaToken}),
+    });
+    showStatus('Loading tasks...');
+    if(!res.ok){const e=await res.text();throw new Error(`Error ${res.status}: ${e.slice(0,300)}`);}
+    const data=await res.json();
+    if(data.error)throw new Error(data.error);
+    renderGantt(data.sections||[]);
+    document.getElementById('sync-time').textContent='Last synced: '+new Date().toLocaleTimeString();
+    hideStatus();
+  }catch(e){hideStatus();showError(e.message);}
+  finally{setLoading(false);}
+}
+
+function setLoading(on){
+  document.getElementById('sync-icon').innerHTML=on?'<span class="spinner"></span>':'⟳';
+  document.getElementById('sync-label').textContent=on?'Syncing...':'Sync';
+  document.getElementById('sync-btn').disabled=on;
+}
+function showStatus(msg){document.getElementById('status-text').textContent=msg;document.getElementById('status-bar').classList.remove('hidden');}
+function hideStatus(){document.getElementById('status-bar').classList.add('hidden');}
+function showError(msg){const b=document.getElementById('error-bar');b.textContent='⚠ '+msg;b.classList.remove('hidden');}
+function hideError(){document.getElementById('error-bar').classList.add('hidden');}
+
+function renderGantt(sections){
+  const NW=WEEKS.length,TOTAL=2+NW;
+  let h=`<div class="gantt-wrap"><table><thead><tr>`;
+  h+=`<th class="mhdr-lbl" style="width:${LBL_W}px;min-width:${LBL_W}px;">TASK / INITIATIVE</th>`;
+  h+=`<th class="mhdr-own" style="width:${OWN_W}px;min-width:${OWN_W}px;">OWNER</th>`;
+  for(let m=0;m<12;m++){const sp=(ML[m]??NW-1)-(MF[m]??0)+1;h+=`<th class="mhdr-m" colspan="${sp}" style="width:${sp*COL_W}px;">${MONTHS[m].toUpperCase()}</th>`;}
+  h+=`</tr><tr><th class="whdr-lbl" style="width:${LBL_W}px;min-width:${LBL_W}px;"></th><th class="whdr-own" style="width:${OWN_W}px;min-width:${OWN_W}px;"></th>`;
+  WEEKS.forEach((w,i)=>{const tc=i===TODAY_WI?' whdr-today':'';h+=`<th class="whdr-wk${tc}" style="width:${COL_W}px;min-width:${COL_W}px;">${w.getMonth()+1}/${w.getDate()}</th>`;});
+  h+=`</tr></thead><tbody>`;
+  sections.forEach(sec=>{
+    const color=SEC_COLOR[sec.name]||'#5B9BD5',secBg=SEC_BG[sec.name]||'#1a1e2a',rowBg=SEC_ROW_BG[sec.name]||'#0f1117';
+    h+=`<tr class="sec-row"><td colspan="${TOTAL}" style="background:${secBg};border-left:4px solid ${color};">▶ &nbsp;${sec.name.toUpperCase()}</td></tr>`;
+    (sec.tasks||[]).forEach(task=>{
+      const si=wcol(new Date(task.start+'T12:00:00')),ei=wcol(new Date(task.end+'T12:00:00'));
+      const bc=task.done?DONE_CLR:color,bg=task.done?'#071a0f':rowBg;
+      const tc=task.done?'#5a6070':'#dde2f0',td=task.done?'text-decoration:line-through;text-decoration-color:#27ae60;':'';
+      const sn=task.name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+      h+=`<tr class="tr-task"><td class="td-lbl" style="width:${LBL_W}px;min-width:${LBL_W}px;max-width:${LBL_W}px;background:${bg};border-left:3px solid ${color};color:${tc};${td}" title="${sn}">${sn}</td>`;
+      h+=`<td class="td-own" style="background:${bg};">${task.owner}</td>`;
+      WEEKS.forEach((_,i)=>{
+        const p=i%2===0?'e':'o',tcc=i===TODAY_WI?' tc':'',inB=i>=si&&i<=ei;
+        if(inB){const rl=i===si?'9px':'0',rr=i===ei?'9px':'0';h+=`<td class="td-wk ${p}${tcc}" style="width:${COL_W}px;min-width:${COL_W}px;"><div class="bar-pill" style="background:${bc};border-radius:${rl} ${rr} ${rr} ${rl};"></div></td>`;}
+        else h+=`<td class="td-wk ${p}${tcc}" style="width:${COL_W}px;min-width:${COL_W}px;"></td>`;
+      });
+      h+=`</tr>`;
+    });
+    h+=`<tr class="tr-spacer"><td colspan="${TOTAL}"></td></tr>`;
+  });
+  h+=`</tbody></table></div>`;
+  document.getElementById('gantt-output').innerHTML=h;
+}
+</script>
+</body>
+</html>
