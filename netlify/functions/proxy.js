@@ -12,31 +12,39 @@ exports.handler = async function(event) {
     });
     const secJson = await secRes.json();
     if (!secJson.data) {
-      return { statusCode: 500, body: JSON.stringify({ error: 'Asana sections error', detail: JSON.stringify(secJson) }) };
+      return { statusCode: 500, body: JSON.stringify({ error: 'Asana error', detail: JSON.stringify(secJson) }) };
     }
-    const sections = secJson.data;
-    const sectionResults = await Promise.all(sections.map(async sec => {
+    const sectionResults = await Promise.all(secJson.data.map(async sec => {
       const taskRes = await fetch(
         `https://app.asana.com/api/1.0/sections/${sec.gid}/tasks?opt_fields=name,start_on,due_on,completed,assignee.name&limit=100`,
         { headers: { 'Authorization': `Bearer ${asanaToken}` } }
       );
       const taskJson = await taskRes.json();
       const tasks = (taskJson.data || []).map(t => ({
-        name:  (t.name || '').replace(/[\u0080-\uFFFF]/g, c => `&#${c.charCodeAt(0)};`),
-        owner: t.assignee ? (t.assignee.name || '').replace(/[\u0080-\uFFFF]/g, c => `&#${c.charCodeAt(0)};`) : '-',
-        start: t.start_on || '2026-01-01',
-        end:   t.due_on   || '2026-12-31',
+        name:  clean(t.name),
+        owner: t.assignee ? clean(t.assignee.name) : '-',
+        start: t.start_on && t.start_on >= '2026-01-01' ? t.start_on : '2026-01-01',
+        end:   t.due_on   && t.due_on   >= '2026-01-01' ? t.due_on   : '2026-12-31',
         done:  t.completed || false,
       }));
-      return { name: sec.name, tasks };
+      return { name: clean(sec.name), tasks };
     }));
-    const body = JSON.stringify({ projectName: 'Annual Planning by Owner', sections: sectionResults });
+    const payload = JSON.stringify({ projectName: 'Annual Planning by Owner', sections: sectionResults });
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: Buffer.from(body).toString('latin1'),
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 };
+
+function clean(str) {
+  if (!str) return '';
+  return str
+    .replace(/\u2014/g, '--').replace(/\u2013/g, '-')
+    .replace(/\u2018|\u2019/g, "'").replace(/\u201C|\u201D/g, '"')
+    .replace(/\u00A0/g, ' ')
+    .split('').map(c => c.charCodeAt(0) > 127 ? `&#${c.charCodeAt(0)};` : c).join('');
+}
