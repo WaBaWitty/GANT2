@@ -13,7 +13,7 @@ exports.handler = async function(event) {
     const projData = await projRes.json();
     const project = (projData.data || []).find(p => p.name === 'Annual Planning by Owner');
     if (!project) {
-      return { statusCode: 404, body: JSON.stringify({ error: 'Project "Annual Planning by Owner" not found in Asana' }) };
+      return { statusCode: 404, body: JSON.stringify({ error: 'Project not found' }) };
     }
     const secRes = await fetch(`https://app.asana.com/api/1.0/projects/${project.gid}/sections?opt_fields=name,gid`, {
       headers: { 'Authorization': `Bearer ${asanaToken}` }
@@ -25,17 +25,19 @@ exports.handler = async function(event) {
         { headers: { 'Authorization': `Bearer ${asanaToken}` } }
       );
       const tasks = ((await taskRes.json()).data || []).map(t => ({
-        name:  t.name,
-        owner: t.assignee ? t.assignee.name : '—',
+        name:  (t.name || '').replace(/[^\x00-\x7F]/g, ''),
+        owner: t.assignee ? (t.assignee.name || '').replace(/[^\x00-\x7F]/g, '') : '-',
         start: t.start_on || '2026-01-01',
         end:   t.due_on   || '2026-12-31',
         done:  t.completed || false,
       }));
-      return { name: sec.name, tasks };
+      return { name: sec.name.replace(/[^\x00-\x7F]/g, ''), tasks };
     }));
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json; charset=utf-8',
+      },
       body: JSON.stringify({ projectName: project.name, sections: sectionResults }),
     };
   } catch (err) {
