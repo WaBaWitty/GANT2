@@ -73,7 +73,7 @@
   .td-wk.e { background:#131728; }
   .td-wk.o { background:#0f1320; }
   .td-wk.tc { border-left:2px solid var(--gold) !important; }
-  .bar-pill { height:16px;margin:0 1px;opacity:0.92; }
+  .bar-pill { height:16px;margin:0;opacity:0.92; }
   .tr-spacer td { height:5px;background:var(--bg); }
 
   @keyframes spin { to { transform:rotate(360deg); } }
@@ -338,9 +338,13 @@ function renderGantt(sections) {
         const inB = i >= si && i <= ei;
         if (inB) {
           const isSingle = si === ei;
-          const rl = (isSingle || i === si) ? '8px' : '0';
-          const rr = (isSingle || i === ei) ? '8px' : '0';
-          h += `<td class="td-wk ${p}${tcc}" style="width:${COL_W}px;min-width:${COL_W}px;"><div class="bar-pill" style="background:${bc};border-radius:${rl} ${rr} ${rr} ${rl};"></div></td>`;
+          const isStart  = i === si;
+          const isEnd    = i === ei;
+          const rl = (isSingle || isStart) ? '8px' : '0';
+          const rr = (isSingle || isEnd)   ? '8px' : '0';
+          const ml = (isSingle || isStart) ? '1px' : '0';
+          const mr = (isSingle || isEnd)   ? '1px' : '0';
+          h += `<td class="td-wk ${p}${tcc}" style="width:${COL_W}px;min-width:${COL_W}px;padding:0;"><div class="bar-pill" style="background:${bc};border-radius:${rl} ${rr} ${rr} ${rl};margin:0 ${mr} 0 ${ml};"></div></td>`;
         } else {
           h += `<td class="td-wk ${p}${tcc}" style="width:${COL_W}px;min-width:${COL_W}px;"></td>`;
         }
