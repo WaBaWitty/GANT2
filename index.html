@@ -8,7 +8,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --bg:#0b0e17;--surface:#131720;--border:#252a3a;--gold:#f0c040;--text:#dde2f0;--muted:#6a7490; }
-  html, body { font-family:'Source Sans 3','Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh;overflow-x:auto;min-width:0; }
+  html, body { font-family:'Source Sans 3','Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh;overflow-x:hidden;min-width:0; }
 
   #setup-overlay { position:fixed;inset:0;background:rgba(11,14,23,0.97);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px); }
   #setup-overlay.hidden { display:none; }
@@ -51,7 +51,7 @@
   .empty-state p { font-size:13px;color:#3a4258; }
   .empty-state strong { color:#27ae60; }
 
-  .gantt-wrap { overflow-x:auto; overflow-y:visible; padding-bottom:12px; }
+  .gantt-wrap { overflow-x:scroll; overflow-y:visible; padding-bottom:0; }
   table { border-collapse:collapse;table-layout:fixed; }
 
   .mhdr-lbl { background:linear-gradient(180deg,#1e2438,#161b28);padding:8px 14px;font-family:'Bebas Neue',Impact,Arial;font-size:11px;letter-spacing:1px;color:#6a7490;text-align:left;border-right:1px solid #252a3a;height:34px;vertical-align:middle;border-bottom:2px solid #252a3a; }
