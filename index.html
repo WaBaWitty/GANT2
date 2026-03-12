@@ -364,6 +364,16 @@ function renderGantt(sections) {
 
   h += `</tbody></table></div>`;
   document.getElementById('gantt-output').innerHTML = h;
+
+  // Sync proxy scrollbar width now that table is rendered
+  const ganttEl = document.querySelector('.gantt-wrap');
+  const proxyEl = document.getElementById('bottom-scroll');
+  const innerEl = document.getElementById('bottom-scroll-inner');
+  if (ganttEl && innerEl) {
+    innerEl.style.width = ganttEl.scrollWidth + 'px';
+    ganttEl.onscroll = function() { if(proxyEl) proxyEl.scrollLeft = ganttEl.scrollLeft; };
+    if(proxyEl) proxyEl.onscroll = function() { ganttEl.scrollLeft = proxyEl.scrollLeft; };
+  }
 }
 
 // Live date in header
@@ -376,24 +386,5 @@ function updateLiveDate() {
 updateLiveDate();
 </script>
 <div id="bottom-scroll"><div id="bottom-scroll-inner"></div></div>
-<script>
-// Sync bottom proxy scrollbar with gantt-wrap
-window.addEventListener('load', function() {
-  const gantt = document.querySelector('.gantt-wrap');
-  const proxy = document.getElementById('bottom-scroll');
-  const inner = document.getElementById('bottom-scroll-inner');
-  function syncWidth() {
-    if (gantt) inner.style.width = gantt.scrollWidth + 'px';
-  }
-  syncWidth();
-  if (gantt) {
-    gantt.addEventListener('scroll', function() { proxy.scrollLeft = gantt.scrollLeft; });
-    proxy.addEventListener('scroll', function() { gantt.scrollLeft = proxy.scrollLeft; });
-  }
-  // Re-sync after data loads
-  const observer = new MutationObserver(syncWidth);
-  if (gantt) observer.observe(gantt, { childList: true, subtree: true });
-});
-</script>
 </body>
 </html>
