@@ -82,6 +82,8 @@
   @keyframes spin { to { transform:rotate(360deg); } }
   .spinner { display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.15);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite; }
   ::-webkit-scrollbar { height:10px;width:7px; }
+  #bottom-scroll { position:fixed;bottom:0;left:0;right:0;height:12px;overflow-x:scroll;overflow-y:hidden;z-index:500;background:#0d1120; }
+  #bottom-scroll-inner { height:1px; }
   .gantt-wrap::-webkit-scrollbar { height:10px; }
   ::-webkit-scrollbar-track { background:#0d1120; }
   ::-webkit-scrollbar-thumb { background:#3a4460;border-radius:4px; }
@@ -372,6 +374,26 @@ function updateLiveDate() {
   el.textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 updateLiveDate();
+</script>
+<div id="bottom-scroll"><div id="bottom-scroll-inner"></div></div>
+<script>
+// Sync bottom proxy scrollbar with gantt-wrap
+window.addEventListener('load', function() {
+  const gantt = document.querySelector('.gantt-wrap');
+  const proxy = document.getElementById('bottom-scroll');
+  const inner = document.getElementById('bottom-scroll-inner');
+  function syncWidth() {
+    if (gantt) inner.style.width = gantt.scrollWidth + 'px';
+  }
+  syncWidth();
+  if (gantt) {
+    gantt.addEventListener('scroll', function() { proxy.scrollLeft = gantt.scrollLeft; });
+    proxy.addEventListener('scroll', function() { gantt.scrollLeft = proxy.scrollLeft; });
+  }
+  // Re-sync after data loads
+  const observer = new MutationObserver(syncWidth);
+  if (gantt) observer.observe(gantt, { childList: true, subtree: true });
+});
 </script>
 </body>
 </html>
