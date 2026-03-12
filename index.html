@@ -51,7 +51,8 @@
   .empty-state p { font-size:13px;color:#3a4258; }
   .empty-state strong { color:#27ae60; }
 
-  .gantt-wrap { overflow:scroll; max-height:calc(100vh - 160px); padding-bottom:0; }
+  .gantt-wrap { overflow:scroll; max-height:calc(100vh - 160px); padding-bottom:12px; }
+  .gantt-wrap::-webkit-scrollbar:horizontal { height:0; display:none; }
   table { border-collapse:collapse;table-layout:fixed; }
 
   thead tr:first-child th { position:sticky;top:0;z-index:20; }
