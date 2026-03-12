@@ -140,6 +140,7 @@
 </div>
 <div class="error-bar hidden" id="error-bar"></div>
 
+<div class="gantt-tooltip" id="gantt-tooltip"></div>
 <div id="gantt-output">
   <div class="empty-state">
     <div class="icon">📋</div>
@@ -390,7 +391,7 @@ function updateLiveDate() {
 }
 updateLiveDate();
 
-// Bar date tooltip
+// Bar date tooltip - tip div is in DOM above this script
 (function() {
   var tip = document.getElementById('gantt-tooltip');
   var hideTimer = null;
@@ -414,7 +415,6 @@ updateLiveDate();
   });
 })();
 </script>
-<div class="gantt-tooltip" id="gantt-tooltip"></div>
 <div id="bottom-scroll"><div id="bottom-scroll-inner"></div></div>
 </body>
 </html>
