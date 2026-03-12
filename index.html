@@ -51,18 +51,19 @@
   .empty-state p { font-size:13px;color:#3a4258; }
   .empty-state strong { color:#27ae60; }
 
-  .gantt-wrap { overflow-x:scroll; overflow-y:visible; padding-bottom:0; }
+  .gantt-wrap { overflow:scroll; max-height:calc(100vh - 160px); padding-bottom:0; }
   table { border-collapse:collapse;table-layout:fixed; }
 
   thead tr:first-child th { position:sticky;top:0;z-index:20; }
-  thead tr:last-child th { position:sticky;top:34px;z-index:20; }
-  .mhdr-lbl { background:linear-gradient(180deg,#1e2438,#161b28);padding:8px 14px;font-family:'Bebas Neue',Impact,Arial;font-size:11px;letter-spacing:1px;color:#6a7490;text-align:left;border-right:1px solid #252a3a;height:34px;vertical-align:middle;border-bottom:2px solid #252a3a; }
-  .mhdr-own { background:linear-gradient(180deg,#1e2438,#161b28);padding:8px;font-family:'Bebas Neue',Impact,Arial;font-size:11px;letter-spacing:1px;color:#6a7490;text-align:center;border-right:2px solid #2e3450;height:34px;vertical-align:middle;border-bottom:2px solid #252a3a; }
+  thead tr:last-child th { position:sticky;top:34px;z-index:19; }
+  thead th { background-clip:padding-box; }
+  .mhdr-lbl { background:#1a2030;padding:8px 14px;font-family:'Bebas Neue',Impact,Arial;font-size:11px;letter-spacing:1px;color:#6a7490;text-align:left;border-right:1px solid #252a3a;height:34px;vertical-align:middle;border-bottom:2px solid #252a3a; }
+  .mhdr-own { background:#1a2030;padding:8px;font-family:'Bebas Neue',Impact,Arial;font-size:11px;letter-spacing:1px;color:#6a7490;text-align:center;border-right:2px solid #2e3450;height:34px;vertical-align:middle;border-bottom:2px solid #252a3a; }
   .mhdr-m { font-family:'Bebas Neue',Impact,Arial;font-size:15px;letter-spacing:3px;color:#1a1200;text-align:center;border-right:1px solid rgba(0,0,0,0.2);height:34px;vertical-align:middle;text-shadow:0 1px 0 rgba(255,255,255,0.2);border-bottom:2px solid rgba(0,0,0,0.15); }
 
-  .whdr-lbl { background:#111520;height:18px;border-right:1px solid #1e2233;border-bottom:1px solid #1e2233; }
-  .whdr-own { background:#111520;height:18px;border-right:2px solid #252a3a;border-bottom:1px solid #1e2233; }
-  .whdr-wk { background:#1a2035;font-size:6.5px;color:#4a5470;text-align:center;height:18px;vertical-align:middle;border-right:1px solid #141828;border-bottom:1px solid #1e2233; }
+  .whdr-lbl { background:#111520 !important;height:18px;border-right:1px solid #1e2233;border-bottom:1px solid #1e2233; }
+  .whdr-own { background:#111520 !important;height:18px;border-right:2px solid #252a3a;border-bottom:1px solid #1e2233; }
+  .whdr-wk { background:#1a2035 !important;font-size:6.5px;color:#4a5470;text-align:center;height:18px;vertical-align:middle;border-right:1px solid #141828;border-bottom:1px solid #1e2233; }
   .whdr-today { border-left:2px solid var(--gold) !important; }
 
   .sec-row td { font-family:'Bebas Neue',Impact,Arial;font-size:12px;letter-spacing:2.5px;color:#fff;padding:5px 16px;border-top:4px solid var(--bg);border-bottom:2px solid var(--bg);height:26px;vertical-align:middle; }
