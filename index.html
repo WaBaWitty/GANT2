@@ -54,6 +54,8 @@
   .gantt-wrap { overflow-x:scroll; overflow-y:visible; padding-bottom:0; }
   table { border-collapse:collapse;table-layout:fixed; }
 
+  thead tr:first-child th { position:sticky;top:0;z-index:20; }
+  thead tr:last-child th { position:sticky;top:34px;z-index:20; }
   .mhdr-lbl { background:linear-gradient(180deg,#1e2438,#161b28);padding:8px 14px;font-family:'Bebas Neue',Impact,Arial;font-size:11px;letter-spacing:1px;color:#6a7490;text-align:left;border-right:1px solid #252a3a;height:34px;vertical-align:middle;border-bottom:2px solid #252a3a; }
   .mhdr-own { background:linear-gradient(180deg,#1e2438,#161b28);padding:8px;font-family:'Bebas Neue',Impact,Arial;font-size:11px;letter-spacing:1px;color:#6a7490;text-align:center;border-right:2px solid #2e3450;height:34px;vertical-align:middle;border-bottom:2px solid #252a3a; }
   .mhdr-m { font-family:'Bebas Neue',Impact,Arial;font-size:15px;letter-spacing:3px;color:#1a1200;text-align:center;border-right:1px solid rgba(0,0,0,0.2);height:34px;vertical-align:middle;text-shadow:0 1px 0 rgba(255,255,255,0.2);border-bottom:2px solid rgba(0,0,0,0.15); }
@@ -103,7 +105,7 @@
 
 <div class="page-header">
   <h1>Annual Planning by Owner</h1>
-  <span class="sub">WaBa Grill &nbsp;·&nbsp; 2026 Gantt Chart &nbsp;·&nbsp; Today: March 6, 2026</span>
+  <span class="sub" id="page-sub">WaBa Grill &nbsp;·&nbsp; 2026 Gantt Chart &nbsp;·&nbsp; Today: <span id="live-date"></span></span>
 </div>
 
 <div class="toolbar">
@@ -360,6 +362,15 @@ function renderGantt(sections) {
   h += `</tbody></table></div>`;
   document.getElementById('gantt-output').innerHTML = h;
 }
+
+// Live date in header
+function updateLiveDate() {
+  const el = document.getElementById('live-date');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+updateLiveDate();
 </script>
 </body>
 </html>
